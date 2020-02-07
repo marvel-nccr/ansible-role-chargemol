@@ -1,0 +1,15 @@
+---
+chargemol_version: "09_26_2017"
+chargemol_src: chargemol_{{ chargemol_version }}.zip
+chargemol_url: "https://sourceforge.net/projects/ddec/files/{{ chargemol_src }}/download"
+
+chargemol_code_folder: "/tmp"
+chargemol_prefix: "/usr/local"
+chargemol_datadir: "{{ chargemol_prefix }}/share/chargemol"
+chargemol_topdir: "{{ chargemol_code_folder }}/chargemol_{{ chargemol_version}}"
+chargemol_executables:
+  - name: chargemol
+    folder: "{{ chargemol_prefix }}/bin"
+    plugin: chargemol.chargemol
+
+root_user: root

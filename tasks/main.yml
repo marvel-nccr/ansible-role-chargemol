@@ -1,0 +1,53 @@
+---
+- name: install required packages
+  become: true
+  become_user: "{{ root_user }}"
+  apt:
+    name:
+      - unzip
+
+- name: Get chargemol source
+  get_url:
+    url: "{{ chargemol_url }}"
+    dest: "{{ chargemol_code_folder }}/{{ chargemol_src }}"
+  register: chargemol_download
+
+- name: Extract chargemol source
+  unarchive:
+    src: "{{ chargemol_download.dest }}"
+    dest: "{{ chargemol_code_folder }}"
+    remote_src: true
+  when: chargemol_download.changed
+
+- name: Install chargemol
+  become: true
+  copy:
+    src: "{{ chargemol_topdir }}/chargemol_FORTRAN_{{ chargemol_version }}/compiled_binaries/linux/Chargemol_{{ chargemol_version }}_linux_parallel"
+    dest: "{{ chargemol_prefix }}/bin/chargemol"
+    mode: 0755
+    remote_src: true
+
+- name: Create chargemol data directory
+  become: true
+  file:
+    dest: "{{ chargemol_datadir }}"
+    state: directory
+
+- name: Install atomic densities to /usr/local/share
+  become: true
+  copy:
+    src: "{{ chargemol_topdir }}/atomic_densities"
+    dest: "{{ chargemol_datadir }}/atomic_densities"
+    remote_src: true
+
+
+#
+#
+#
+# - include_tasks: setup-ubuntu-16.04.yml
+#   when: ansible_distribution == 'Ubuntu' \
+#         and ansible_distribution_version == '16.04'
+#
+# - include_tasks: setup-ubuntu-18.04.yml
+#   when: ansible_distribution == 'Ubuntu' \
+#         and ansible_distribution_version == '18.04'
